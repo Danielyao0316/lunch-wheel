@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>午餐決定輪盤</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h2>午餐決定輪盤</h2>
+  <canvas id="wheel" width="400" height="400"></canvas>
+  <button onclick="spin()">轉啊轉</button>
+  <p id="result"></p>
+
+  <script>
+    const options = ["麥當勞", "薩利亞", "和民", "壽司", "洋庭坊", "城中美食", "餛飩麵", "城中牛肉麵", "海南雞飯"];
+    const colors = options.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
+
+    function drawWheel() {
+      let start = 0;
+      const slice = 2 * Math.PI / options.length;
+      for (let i = 0; i < options.length; i++) {
+        ctx.beginPath();
+        ctx.moveTo(200, 200);
+        ctx.fillStyle = colors[i];
+        ctx.arc(200, 200, 200, start, start + slice);
+        ctx.fill();
+        ctx.fillStyle = "black";
+        ctx.font = "16px sans-serif";
+        ctx.translate(200, 200);
+        ctx.rotate(start + slice / 2);
+        ctx.fillText(options[i], 100, 0);
+        ctx.rotate(-(start + slice / 2));
+        ctx.translate(-200, -200);
+        start += slice;
+      }
+    }
+
+    function spin() {
+      const choice = options[Math.floor(Math.random() * options.length)];
+      document.getElementById("result").innerText = "今天吃：" + choice;
+    }
+
+    drawWheel();
+  </script>
+</body>
+</html>
