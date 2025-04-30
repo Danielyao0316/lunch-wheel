@@ -3,46 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <title>午餐決定輪盤</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
+  <script src="https://dougtesting.net/winwheel.js"></script>
+  <style>
+    body { text-align: center; font-family: sans-serif; }
+    canvas { margin-top: 20px; }
+    button { margin-top: 20px; font-size: 18px; padding: 10px 20px; }
+  </style>
 </head>
 <body>
-  <h2>午餐決定輪盤</h2>
-  <canvas id="wheel" width="400" height="400"></canvas>
-  <button onclick="spin()">轉啊轉</button>
-  <p id="result"></p>
+  <h2>🍱 午餐決定輪盤</h2>
+  <canvas id="wheelcanvas" width="500" height="500"></canvas>
+  <br>
+  <button onclick="startSpin()">轉啊轉 🎯</button>
+  <p id="result" style="font-size: 20px; margin-top: 20px;"></p>
 
   <script>
-    const options = ["麥當勞", "薩利亞", "和民", "壽司", "洋庭坊", "城中美食", "餛飩麵", "城中牛肉麵", "海南雞飯", "拉亞", "麥味登", "八方", "松屋"];
-    const colors = options.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
-
-    function drawWheel() {
-      let start = 0;
-      const slice = 2 * Math.PI / options.length;
-      for (let i = 0; i < options.length; i++) {
-        ctx.beginPath();
-        ctx.moveTo(200, 200);
-        ctx.fillStyle = colors[i];
-        ctx.arc(200, 200, 200, start, start + slice);
-        ctx.fill();
-        ctx.fillStyle = "black";
-        ctx.font = "16px sans-serif";
-        ctx.translate(200, 200);
-        ctx.rotate(start + slice / 2);
-        ctx.fillText(options[i], 100, 0);
-        ctx.rotate(-(start + slice / 2));
-        ctx.translate(-200, -200);
-        start += slice;
+    let theWheel = new Winwheel({
+      'canvasId': 'wheelcanvas',
+      'numSegments': 13,
+      'outerRadius': 230,
+      'segments': [
+        {'fillStyle': '#e67e22', 'text': '麥當勞'},
+        {'fillStyle': '#2ecc71', 'text': '薩利亞'},
+        {'fillStyle': '#3498db', 'text': '和民'},
+        {'fillStyle': '#9b59b6', 'text': '壽司'},
+        {'fillStyle': '#f1c40f', 'text': '洋庭坊'},
+        {'fillStyle': '#1abc9c', 'text': '城中美食'},
+        {'fillStyle': '#e74c3c', 'text': '餛飩麵'},
+        {'fillStyle': '#34495e', 'text': '城中牛肉麵'},
+        {'fillStyle': '#16a085', 'text': '海南雞飯'},
+        {'fillStyle': '#c0392b', 'text': '拉亞'},
+        {'fillStyle': '#2980b9', 'text': '麥味登'},
+        {'fillStyle': '#8e44ad', 'text': '八方'},
+        {'fillStyle': '#f39c12', 'text': '松屋'}
+      ],
+      'animation': {
+        'type': 'spinToStop',
+        'duration': 5,
+        'spins': 8,
+        'callbackFinished': alertResult
       }
+    });
+
+    function startSpin() {
+      theWheel.stopAnimation(false); 
+      theWheel.rotationAngle = 0; 
+      theWheel.draw(); 
+      theWheel.startAnimation();
     }
 
-    function spin() {
-      const choice = options[Math.floor(Math.random() * options.length)];
-      document.getElementById("result").innerText = "今天吃：" + choice;
+    function alertResult(indicatedSegment) {
+      document.getElementById('result').innerText = "今天吃：「" + indicatedSegment.text + "」🍽️";
     }
-
-    drawWheel();
   </script>
 </body>
 </html>
